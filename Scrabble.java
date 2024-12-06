@@ -89,48 +89,40 @@ public class Scrabble {
     // 3. The user is prompted to enter another word, or '.' to end the hand. 
 	public static void playHand(String hand) {
 		int score = 0;
-		int score1=0;
-		boolean checkContain=true;
-		// Declares the variable in to refer to an object of type In, and initializes it to represent
-		// the stream of characters coming from the keyboard. Used for reading the user's inputs.   
 		In in = new In();
 		while (hand.length() > 0) {
-			System.out.println("Current Hand: " + MyString.spacedString(hand));
+			System.out.println("Current Hand: " + spacedString(hand));
 			System.out.println("Enter a word, or '.' to finish playing this hand:");
-			// Reads the next "token" from the keyboard. A token is defined as a string of 
-			// non-whitespace characters. Whitespace is either space characters, or  
-			// end-of-line characters.
-			String input = in.readString();
-			if(input.equals(".")) break;
-			checkContain=true;
-			for(int i =0; i<input.length();i++){
-				if(!containsChar(hand,input.charAt(i))){checkContain = false;
-				break;}
+			String input = in.readString().trim();
+			if (input.equals(".")) {
+				break;
 			}
-			if(!checkContain){
+			boolean checkContain = true;
+			for (int i = 0; i < input.length(); i++) {
+				if (!containsChar(hand, input.charAt(i))) {
+					checkContain = false;
+					break;
+				}
+			}
+			if (!checkContain) {
 				System.out.println("Invalid word. Try again.");
 				continue;
-			}
-
-			if (!Scrabble.isWordInDictionary(input)) {
+			}	
+			if (!isWordInDictionary(input)) {
 				System.out.println("No such word in the dictionary. Try again.");
-				continue;}
-			if (!Scrabble.subsetOf(input, hand)) {
+				continue;
+			}
+			if (!subsetOf(input, hand)) {
 				System.out.println("Word is not a subset of the hand. Try again.");
-				continue;	}
-				score1=wordScore(input);
-				score=score+score1;
-				System.out.println(input+" earned "+score1+" points. Score: "+score+" points");
-				hand=remove(hand, input);
-			
+				continue;
+			}
+			int wordScore = wordScore(input);
+			score += wordScore;
+			System.out.println(input + " earned " + wordScore + " points. Score: " + score + " points");
+			hand = remove(hand, input);
 		}
-		if (hand.length() == 0) {
-	        System.out.println("Ran out of letters. Total score: " + score + " points");
-		} else {
-			System.out.println("End of hand. Total score: " + score + " points");
-		}
+		System.out.println("End of hand. Total score: " + score + " points");
 	}
-
 	// Plays a Scrabble game. Prompts the user to enter 'n' for playing a new hand, or 'e'
 	// to end the game. If the user enters any other input, writes an error message.
 	public static void playGame() {
@@ -139,7 +131,6 @@ public class Scrabble {
 		// The variable in is set to represent the stream of characters 
 		// coming from the keyboard. Used for getting the user's inputs.  
 		In in = new In();
-
 		while(true) {
 			System.out.println("Enter n to deal a new hand, or e to end the game:");
 			// Gets the user's input, which is all the characters entered by 
@@ -241,15 +232,13 @@ public class Scrabble {
      * @return a string consisting of the characters of str, separated by spaces.
      */
     public static String spacedString(String str) {
-        if(str.isEmpty()) return str;
-        String str1=""+str.charAt(0);
-        int i = 1;
-        for(i = 1; i<str.length();i++){
-            str1=str1+" ";
-            str1 = str1 + str.charAt(i);
-        }
-        return str1;
-    }
+		if (str.isEmpty()) return str;
+		String result = "" + str.charAt(0);
+		for (int i = 1; i < str.length(); i++) {
+			result = result + " " + str.charAt(i);
+		}
+		return result;
+	}
   
     /**
      * Returns a string of n lowercase letters, selected randomly from 
@@ -281,24 +270,28 @@ public class Scrabble {
      * @param str2 - a string
      * @return a string consisting of str1 minus all the characters of str2
      */
-    public static String remove(String str1, String str2) {
-        char [] st1 = str1.toCharArray();
-        char [] st2 = str2.toCharArray();
-        String s ="";
-        for(int i =0; i < str2.length();i++){
-            for(int b =0; b < str1.length();b++){
-                if(st1[b]==st2[i]){
-                     st1[b]=(char)0;
-                     break;
-                    }
-                }
-            }
-            for(int b =0; b < str1.length();b++){
-                s=s+st1[b];
-            }
-        return s;
-    }
-
+	public static String remove(String str1, String str2) {
+		char[] st1 = str1.toCharArray();
+		char[] st2 = str2.toCharArray();
+		String s = "";
+	
+		for (int i = 0; i < str2.length(); i++) {
+			for (int b = 0; b < str1.length(); b++) {
+				if (st1[b] == st2[i]) {
+					st1[b] = (char) 0;
+					break;
+				}
+			}
+		}
+	
+		for (int b = 0; b < str1.length(); b++) {
+			if (st1[b] != (char) 0) {
+				s = s + st1[b];
+			}
+		}
+	
+		return s;
+	}
     /**
      * Returns a string consisting of the given string, with the given 
      * character inserted randomly somewhere in the string.
@@ -317,9 +310,8 @@ public class Scrabble {
 	public static boolean containsChar(String str, char c) {
 		for (int i = 0; i < str.length(); i++) {
 			if (str.charAt(i) == c) {
-				return true; 
+				return true;
 			}
 		}
-		return false; 
-	}
+		return false;
 }

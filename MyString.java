@@ -65,14 +65,12 @@ public class MyString {
      * @return a string consisting of the characters of str, separated by spaces.
      */
     public static String spacedString(String str) {
-        if(str.isEmpty()) return str;
-        String str1=""+str.charAt(0);
-        int i = 1;
-        for(i = 1; i<str.length();i++){
-            str1=str1+" ";
-            str1 = str1 + str.charAt(i);
+        if (str.isEmpty()) return str;
+        String result = "" + str.charAt(0);
+        for (int i = 1; i < str.length(); i++) {
+            result = result + " " + str.charAt(i);
         }
-        return str1;
+        return result;
     }
   
     /**
@@ -109,6 +107,7 @@ public class MyString {
         char[] st1 = str1.toCharArray();
         char[] st2 = str2.toCharArray();
         String s = "";
+    
         for (int i = 0; i < str2.length(); i++) {
             for (int b = 0; b < str1.length(); b++) {
                 if (st1[b] == st2[i]) {
@@ -117,8 +116,9 @@ public class MyString {
                 }
             }
         }
-        for (int b = 0; b < st1.length; b++) {
-            if (st1[b] != (char) 0) { 
+    
+        for (int b = 0; b < str1.length(); b++) {
+            if (st1[b] != (char) 0) {
                 s = s + st1[b];
             }
         }
