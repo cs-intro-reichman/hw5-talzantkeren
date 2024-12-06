@@ -48,24 +48,39 @@ public class Scrabble {
 
 	// Checks if the given word is in the dictionary.
 	public static boolean isWordInDictionary(String word) {
-		//// Replace the following statement with your code
-		return false;
+		for(int i = 0; i< DICTIONARY.length;i++){
+			if(word.equals(DICTIONARY[i])) return true;
+		}
+			return false;
 	}
 	
 	// Returns the Scrabble score of the given word.
 	// If the length of the word equals the length of the hand, adds 50 points to the score.
 	// If the word includes the sequence "runi", adds 1000 points to the game.
 	public static int wordScore(String word) {
-		//// Replace the following statement with your code
-		return 0;
+		int score = 0;
+		int i = 0;
+		int pos =0;
+		for(i=0;i<word.length();i++){
+			pos=(word.charAt(i)-97);
+			score=SCRABBLE_LETTER_VALUES[pos]+score;
+		}
+
+        score= score*word.length();
+		if(word.length()==10) score+=50;;
+		if(word.contains("r")&&word.contains("u")&& word.contains("n")&&word.contains("i")) score+=1000;
+		return score;
 	}
 
 	// Creates a random hand of length (HAND_SIZE - 2) and then inserts
 	// into it, at random indexes, the letters 'a' and 'e'
 	// (these two vowels make it easier for the user to construct words)
 	public static String createHand() {
-		//// Replace the following statement with your code
-		return null;
+		String s =randomStringOfLetters(HAND_SIZE - 2);
+		s=insertRandomly('a',s);
+		s=insertRandomly('e',s);
+
+		return s;
 	}
 	
     // Runs a single hand in a Scrabble game. Each time the user enters a valid word:
@@ -73,8 +88,9 @@ public class Scrabble {
     // 2. The user gets the Scrabble points of the entered word.
     // 3. The user is prompted to enter another word, or '.' to end the hand. 
 	public static void playHand(String hand) {
-		int n = hand.length();
 		int score = 0;
+		int score1=0;
+		boolean checkContain=true;
 		// Declares the variable in to refer to an object of type In, and initializes it to represent
 		// the stream of characters coming from the keyboard. Used for reading the user's inputs.   
 		In in = new In();
@@ -85,9 +101,28 @@ public class Scrabble {
 			// non-whitespace characters. Whitespace is either space characters, or  
 			// end-of-line characters.
 			String input = in.readString();
-			//// Replace the following break statement with code
-			//// that completes the hand playing loop
-			break;
+			if(input.equals(".")) break;
+			checkContain=true;
+			for(int i =0; i<input.length();i++){
+				if(!containsChar(hand,input.charAt(i))){checkContain = false;
+				break;}
+			}
+			if(!checkContain){
+				System.out.println("Invalid word. Try again.");
+				continue;
+			}
+
+			if (!Scrabble.isWordInDictionary(input)) {
+				System.out.println("No such word in the dictionary. Try again.");
+				continue;}
+			if (!Scrabble.subsetOf(input, hand)) {
+				System.out.println("Word is not a subset of the hand. Try again.");
+				continue;	}
+				score1=wordScore(input);
+				score=score+score1;
+				System.out.println(input+" earned "+score1+" points. Score: "+score+" points");
+				hand=remove(hand, input);
+			
 		}
 		if (hand.length() == 0) {
 	        System.out.println("Ran out of letters. Total score: " + score + " points");
@@ -110,15 +145,23 @@ public class Scrabble {
 			// Gets the user's input, which is all the characters entered by 
 			// the user until the user enter the ENTER character.
 			String input = in.readString();
-			//// Replace the following break statement with code
-			//// that completes the game playing loop
-			break;
+			if(input.equals("e")){
+				break;
+			}
+			if(input.equals("n")){
+				String s =createHand();
+				playHand(s);
+			}
+			if(!((input.equals("n"))||(input.equals("e")))){
+				System.out.println("error");
+				continue;
+			}
 		}
 	}
 
 	public static void main(String[] args) {
 		//// Uncomment the test you want to run
-		////testBuildingTheDictionary();  
+		testBuildingTheDictionary();  
 		////testScrabbleScore();    
 		////testCreateHands();  
 		////testPlayHands();
@@ -151,5 +194,132 @@ public class Scrabble {
 		//playHand("ocostrza");
 		//playHand("arbffip");
 		//playHand("aretiin");
+	}
+	public static int countChar(String str, char ch) {
+        int len = str.length();
+        int i = 0;
+        int c = 0;
+        for(i = 0; i < len; i++){
+            if(str.charAt(i)==ch) c++;
+        }
+
+        return c;
+    }
+
+    /** Returns true if str1 is a subset string str2, false otherwise
+     *  Examples:
+     *  subsetOf("sap","space") returns true
+     *  subsetOf("spa","space") returns false
+     *  subsetOf("pass","space") returns false
+     *  subsetOf("c","space") returns true
+     *
+     * @param str1 - a string
+     * @param str2 - a string
+     * @return true is str1 is a subset of str2, false otherwise
+     */
+    public static boolean subsetOf(String str1, String str2) {
+        for (int i = 0; i < str1.length(); i++) {
+            char c = str1.charAt(i);
+            int n = str2.indexOf(c);
+            if (n == -1) {
+                return false;
+            }
+            str2 = str2.substring(0, n) + str2.substring(n + 1);
+        }
+
+        return true;
+    }
+
+
+
+    /** Returns a string which is the same as the given string, with a space
+     * character inserted after each character in the given string, except
+     * for the last character. 
+     * Example: spacedString("silent") returns "s i l e n t"
+     * 
+     * @param str - a string
+     * @return a string consisting of the characters of str, separated by spaces.
+     */
+    public static String spacedString(String str) {
+        if(str.isEmpty()) return str;
+        String str1=""+str.charAt(0);
+        int i = 1;
+        for(i = 1; i<str.length();i++){
+            str1=str1+" ";
+            str1 = str1 + str.charAt(i);
+        }
+        return str1;
+    }
+  
+    /**
+     * Returns a string of n lowercase letters, selected randomly from 
+     * the English alphabet 'a', 'b', 'c', ..., 'z'. Note that the same
+     * letter can be selected more than once.
+     * 
+     * Example: randomStringOfLetters(3) can return "zoo"
+     * 
+     * @param n - the number of letter to select
+     * @return a randomly generated string, consisting of 'n' lowercase letters
+     */
+    public static String randomStringOfLetters(int n) {
+        int [] num = new int[n];
+        String re = "";
+        for(int i = 0;i<n;i++){
+            num[i] = (int) (Math.random()* 26) + 97;
+            re=re+(char)num[i];
+        }
+
+        return re;
+    }
+
+    /**
+     * Returns a string consisting of the string str1, minus all the characters in the
+     * string str2. Assumes (without checking) that str2 is a subset of str1.
+     * Example: remove("meet","committee") returns "comit" 
+     * 
+     * @param str1 - a string
+     * @param str2 - a string
+     * @return a string consisting of str1 minus all the characters of str2
+     */
+    public static String remove(String str1, String str2) {
+        char [] st1 = str1.toCharArray();
+        char [] st2 = str2.toCharArray();
+        String s ="";
+        for(int i =0; i < str2.length();i++){
+            for(int b =0; b < str1.length();b++){
+                if(st1[b]==st2[i]){
+                     st1[b]=(char)0;
+                     break;
+                    }
+                }
+            }
+            for(int b =0; b < str1.length();b++){
+                s=s+st1[b];
+            }
+        return s;
+    }
+
+    /**
+     * Returns a string consisting of the given string, with the given 
+     * character inserted randomly somewhere in the string.
+     * For example, insertRandomly("s","cat") can return "scat", or "csat", or "cast", or "cats".  
+     * @param ch - a character
+     * @param str - a string
+     * @return a string consisting of str with ch inserted somewhere
+     */
+    public static String insertRandomly(char ch, String str) {
+         // Generate a random index between 0 and str.length()
+         int randomIndex = (int) (Math.random() * (str.length() + 1));
+         // Insert the character at the random index
+         String result = str.substring(0, randomIndex) + ch + str.substring(randomIndex);
+         return result;
+    }    
+	public static boolean containsChar(String str, char c) {
+		for (int i = 0; i < str.length(); i++) {
+			if (str.charAt(i) == c) {
+				return true; 
+			}
+		}
+		return false; 
 	}
 }
