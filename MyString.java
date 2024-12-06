@@ -106,23 +106,25 @@ public class MyString {
      * @return a string consisting of str1 minus all the characters of str2
      */
     public static String remove(String str1, String str2) {
-        char [] st1 = str1.toCharArray();
-        char [] st2 = str2.toCharArray();
-        String s ="";
-        for(int i =0; i < str2.length();i++){
-            for(int b =0; b < str1.length();b++){
-                if(st1[b]==st2[i]){
-                     st1[b]=(char)0;
-                     break;
-                    }
+        char[] st1 = str1.toCharArray();
+        char[] st2 = str2.toCharArray();
+        String s = "";
+        for (int i = 0; i < str2.length(); i++) {
+            for (int b = 0; b < str1.length(); b++) {
+                if (st1[b] == st2[i]) {
+                    st1[b] = (char) 0;
+                    break;
                 }
             }
-            for(int b =0; b < str1.length();b++){
-                s=s+st1[b];
+        }
+        for (int b = 0; b < st1.length; b++) {
+            if (st1[b] != (char) 0) { 
+                s = s + st1[b];
             }
+        }
+    
         return s;
     }
-
     /**
      * Returns a string consisting of the given string, with the given 
      * character inserted randomly somewhere in the string.
